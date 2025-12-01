@@ -9,6 +9,7 @@ This site documents an implementation of a new opcode in Bitcoin Core:
 
 ```text
 OP_MUL = 0x95
+```
 
 The opcode performs signed 32-bit integer multiplication in Bitcoin Script, with explicit overflow detection.
 
@@ -58,3 +59,4 @@ title: Design and rationale
 
 ```text
 ... x1 x2 OP_MUL  ->  ... (x1 * x2)
+```
