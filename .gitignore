@@ -1,0 +1,20 @@
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.iml
+
+# Python virtual environments (if any helper scripts are added later)
+.venv/
+venv/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*.swo

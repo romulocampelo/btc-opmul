@@ -1,0 +1,9 @@
+Placeholder for an OP_MUL diagram.
+
+You can replace this file with a real image, e.g.:
+
+- op_mul-diagram.png
+
+containing a simple block diagram:
+  [Stack before] --> [OP_MUL execution] --> [Stack after],
+with explicit mention of 32-bit range check and SCRIPT_ERR_MUL on overflow.

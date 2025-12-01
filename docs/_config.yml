@@ -1,0 +1,15 @@
+title: "OP_MUL for Bitcoin Core"
+description: "Documentation for a proposed OP_MUL (0x95) implementation in Bitcoin Core"
+theme: minima
+
+# GitHub Pages will build from the /docs directory of the default branch.
+# You can customize navigation links here if desired:
+# nav:
+#   - title: "Home"
+#     url: /
+#   - title: "Design"
+#     url: /op_mul-design.html
+#   - title: "Setup"
+#     url: /bitcoin-core-setup.html
+#   - title: "Testing"
+#     url: /testing.html
