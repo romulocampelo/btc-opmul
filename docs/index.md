@@ -1,7 +1,20 @@
 ---
-layout: default
-title: OP_MUL – Overview
+title: OP_MUL for Bitcoin Core
 ---
+
+<style>
+  body {
+    background-color: #111111;
+    color: #eeeeee;
+  }
+  a {
+    color: #66b3ff;
+  }
+  code, pre {
+    background-color: #222222;
+    border-radius: 4px;
+  }
+</style>
 
 # OP_MUL for Bitcoin Core
 
