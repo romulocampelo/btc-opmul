@@ -1,100 +1,132 @@
+~~~markdown
 # Design Rationale and Formal Specification of OP_MUL (0x95)
 
-This document presents a formal and academically rigorous description of the design, semantics, and implementation criteria adopted for the opcode `OP_MUL`, integrated into Bitcoin Core's Script interpreter.
+This document provides a formal, academically rigorous description of the design decisions, semantics, and implementation criteria adopted for the opcode `OP_MUL`, integrated into Bitcoin Core's Script interpreter.
 
 ---
 
 ## 1. Motivation
 
-Bitcoin Script includes a limited set of arithmetic opcodes for integer manipulation. However, it does not include a dedicated multiplication operator, despite the strong need in advanced covenant constructions, accumulators, and algebraic verification scripts.
+Bitcoin Script includes a minimal arithmetic subsystem, offering only basic integer operations. Despite Script’s constrained nature, several advanced constructions—such as accumulator updates, covenant-like systems, polynomial checks, or algebraic verification templates—require a safe and deterministic multiplication operator.
 
-The goal of this opcode is:
+Historically, multiplication existed in early Bitcoin releases but was disabled due to concerns about nondeterministic overflow behavior across architectures. This project reintroduces multiplication with **explicit, consensus-safe integer semantics**, aligned with the modern `CScriptNum` model.
 
-- to introduce safe and deterministic integer multiplication,
-- while respecting the constraints of Bitcoin Script (minimalism, determinism, consensus-critical safety),
-- and ensuring compatibility with the existing `CScriptNum` model.
+The objectives are:
+
+- to define a multiplication operator that is **safe**, **deterministic**, and **architecturally stable**;
+- to remain faithful to Script's constraints: minimalism, predictability, and consensus safety;
+- to be interoperable with the integer domain enforced by `CScriptNum`.
 
 ---
 
 ## 2. Operational Semantics
 
-`OP_MUL` consumes two elements from the stack:
+`OP_MUL` operates on the top two elements of the stack:
 
-`..., x1, x2 → ..., (x1 * x2)`
+```
+..., x1, x2   →   ..., (x1 × x2)
+```
 
-Both operands:
+Both operands are:
 
-- are interpreted as **signed 32-bit integers**,
-- are extracted via `CScriptNum` with a **4-byte encoding limit** (ensuring compatibility with other arithmetic opcodes).
+- interpreted as **signed 32-bit integers**,  
+- decoded using `CScriptNum` with a **4-byte canonical encoding limit**.
 
 ### Formal Definition
 
 Let:
 
-- `x1, x2 ∈ ℤ32` (signed 32-bit domain),
-- multiplication occurs in ℤ64 (intermediate domain).
+- `x1, x2 ∈ ℤ₃₂` (signed 32-bit domain),
+- multiplication performed in `ℤ₆₄`.
 
 Define:
 
-`p = x1 × x2`
+```
+p = x1 × x2
+```
 
 Then:
 
-- If `p ∈ [-2³¹, 2³¹ − 1]`, the result is pushed onto the stack.
-- Otherwise, script evaluation terminates with the error `SCRIPT_ERR_MUL`.
+- If `p ∈ [-2³¹, 2³¹ − 1]`,  
+  the interpreter pushes `p` onto the stack.
+
+- Otherwise,  
+  execution terminates with `SCRIPT_ERR_MUL`.
+
+This specification ensures compatibility with existing arithmetic opcodes while enforcing deterministic overflow handling.
 
 ---
 
 ## 3. Overflow Handling
 
-Bitcoin Script requires deterministic behavior across all node implementations.
+Overflow must be handled **explicitly** to maintain consensus determinism across platforms.
 
-Accordingly:
+The interpreter follows this sequence:
 
-1. `x1` and `x2` are promoted to `int64_t`.
-2. The product `p = x1 * x2` is computed in 64-bit precision.
-3. Overflow is detected via explicit boundary checks:
-   - `p < INT32_MIN`  
+1. Decode `x1` and `x2` as `CScriptNum(4 bytes)`.
+2. Promote both values to `int64_t`.
+3. Compute the product:
+   ```
+   p = x1 * x2
+   ```
+4. Perform boundary checks:
+   - `p < INT32_MIN`
    - `p > INT32_MAX`
-4. If overflow occurs:
-   - the interpreter raises `SCRIPT_ERR_MUL`,
-   - evaluation is aborted,
-   - no value is pushed.
+5. If overflow is detected:
+   - raise `SCRIPT_ERR_MUL`,
+   - abort script evaluation,
+   - do not push any value.
 
-This design avoids wrap-around, which would violate consensus determinism.
+This avoids wrap-around or architecture-dependent behavior, eliminating the historical sources of nondeterminism.
 
 ---
 
 ## 4. Integration Points in Bitcoin Core
 
-The implementation modifies the following components:
+The implementation affects the following components:
 
-- `src/script/interpreter.cpp`  
-  Addition of the `case OP_MUL` block implementing operational semantics.
+- **`src/script/interpreter.cpp`**  
+  Implementation of `case OP_MUL`, defining the operational semantics.
 
-- `src/script/script_error.h`  
-  Introduction of the error code `SCRIPT_ERR_MUL`.
+- **`src/script/script_error.h`**  
+  Definition of the new consensus error code: `SCRIPT_ERR_MUL`.
 
-- `src/script/script.cpp`  
-  Human-readable string for the new error code.
+- **`src/script/script.cpp`**  
+  Registration of the corresponding human-readable error string.
 
-- Unit tests (`src/test/script_tests.cpp`)  
-  Validation of overflow and correct computation.
+- **Unit tests (`src/test/script_tests.cpp`)**  
+  Validation of correctness and overflow rejection.
 
-- Functional tests (`test/functional/*.py`)  
-  Independent verification of script behavior within full node execution.
+- **Script test vectors (`src/test/data/script_tests.json`)**  
+  Canonical serialization and cross-language coverage.
+
+- **Functional tests (`test/functional/*.py`)**  
+  End-to-end validation within a running Bitcoin node.
+
+Each integration point follows established Core development patterns and preserves backward compatibility.
 
 ---
 
 ## 5. Design Principles and Constraints
 
-The design adheres to the following principles:
+The design adheres to well-defined principles:
 
-- **Determinism** — identical behavior across all architectures.
-- **Minimalism** — the opcode does not introduce new data types.
-- **Safety** — all edge cases are explicitly defined.
-- **Backward compatibility** — no existing scripts are affected.
-- **Consensus soundness** — every error mode leads to unambiguous script failure.
+- **Determinism**  
+  Identical behavior across all platforms and architectures.
+
+- **Minimality**  
+  The opcode introduces no new data types or encoding rules.
+
+- **Safety**  
+  All arithmetic edge cases are explicitly handled.
+
+- **Consensus Soundness**  
+  Every failure path maps to a well-defined error, producing unambiguous script failure.
+
+- **Backward Compatibility**  
+  No existing scripts or opcodes are affected.
+
+These principles match the philosophy of Script as a constrained, predictable execution environment.
 
 ---
 
@@ -111,14 +143,20 @@ Process:
   promote to int64
   p = x1 * x2
   if p outside INT32 range:
-      fail with SCRIPT_ERR_MUL
+        fail with SCRIPT_ERR_MUL
   else:
-      push(p)
+        push(p)
 
 Output Stack:
-[..., p]  or  Script Failure
+[..., p]        or        Script Failure
 ```
+
+---
+
 ## 7. Conclusion
 
-`OP_MUL` provides a mathematically well-defined, deterministic, and safe extension to Bitcoin Script’s arithmetic subsystem.  
-The opcode integrates cleanly into the interpreter, follows the conventions of existing numeric operations, and is accompanied by thorough unit and functional testing ensuring correctness.
+`OP_MUL` provides a mathematically precise, deterministic, and consensus-safe multiplication operator for Bitcoin Script.  
+The opcode integrates cleanly into the interpreter, mirrors the conventions of existing arithmetic instructions, and is supported by comprehensive unit and functional tests.
+
+This design forms a robust foundation for educational exploration, applied research, and controlled experimentation with Script language extensions.
+~~~

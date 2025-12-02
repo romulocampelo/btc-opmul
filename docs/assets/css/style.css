@@ -1,74 +1,132 @@
-/* Global page background and text */
-body {
-  background-color: #111111;
-  color: #eeeeee;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  line-height: 1.6;
+~~~css
+/* ------------------------------ */
+/* Global Layout and Typography   */
+/* ------------------------------ */
 
-  /* estas duas linhas recentralizam o conteúdo */
+body {
+  background-color: #0e0e0e;
+  color: #e5e5e5;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.65;
+
+  /* centralização e largura ideal */
   max-width: 900px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 2rem;
+
+  /* leve sombra para destacar do fundo */
+  box-shadow: 0 0 32px rgba(0, 0, 0, 0.45);
+  border-radius: 10px;
 }
 
 
-/* Headings */
-h1, h2, h3, h4 {
+/* ------------------------------ */
+/* Headings                       */
+/* ------------------------------ */
+
+h1 {
+  font-size: 2.2rem;
   color: #ffffff;
-  margin-top: 1.4rem;
+  margin-top: 1.8rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #333333;
+  padding-bottom: 0.4rem;
+}
+
+h2 {
+  font-size: 1.7rem;
+  color: #f0f0f0;
+  margin-top: 1.6rem;
+  margin-bottom: 0.8rem;
+}
+
+h3, h4 {
+  color: #dddddd;
+  margin-top: 1.3rem;
   margin-bottom: 0.6rem;
 }
 
-/* Links */
+
+/* ------------------------------ */
+/* Links                          */
+/* ------------------------------ */
+
 a {
-  color: #66b3ff;
+  color: #7ab8ff;
   text-decoration: none;
+  transition: 0.15s ease-in-out;
 }
 
 a:hover,
 a:focus {
+  color: #a5d1ff;
   text-decoration: underline;
 }
 
-/* Code and preformatted blocks */
+
+/* ------------------------------ */
+/* Code Blocks                    */
+/* ------------------------------ */
+
 code {
   background-color: #222222;
-  padding: 0.1rem 0.3rem;
+  padding: 0.15rem 0.35rem;
   border-radius: 4px;
   font-family: "JetBrains Mono", "Fira Code", Consolas, "Courier New", monospace;
+  font-size: 0.95rem;
 }
 
 pre {
   background-color: #1a1a1a;
-  padding: 0.8rem 1rem;
-  border-radius: 6px;
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
   overflow-x: auto;
   border: 1px solid #333333;
+
+  /* leve destaque com sombra */
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
+
+  /* barra lateral opcional: */
+  border-left: 4px solid #3d7fff;
 }
 
-/* Lists */
+
+/* ------------------------------ */
+/* Lists                          */
+/* ------------------------------ */
+
 ul, ol {
-  margin-left: 1.4rem;
+  margin-left: 1.6rem;
+  margin-top: 0.4rem;
+  margin-bottom: 0.8rem;
 }
 
-/* Horizontal rules */
+
+/* ------------------------------ */
+/* Horizontal Rule                */
+/* ------------------------------ */
+
 hr {
   border: 0;
   border-top: 1px solid #333333;
-  margin: 1.5rem 0;
+  margin: 2rem 0;
 }
 
-/* Tables (se você vier a usar) */
+
+/* ------------------------------ */
+/* Tables                         */
+/* ------------------------------ */
+
 table {
   border-collapse: collapse;
   width: 100%;
-  margin: 1rem 0;
+  margin: 1.3rem 0;
   font-size: 0.95rem;
 }
 
 th, td {
-  border: 1px solid #333333;
-  padding: 0.4rem 0.6rem;
+  border: 1px solid #2c2c2c;
+  padding: 0.55rem 0.7rem;
 }
 
 th {
@@ -80,9 +138,15 @@ tr:nth-child(even) {
   background-color: #181818;
 }
 
-/* Pequeno ajuste no rodapé, se existir */
+
+/* ------------------------------ */
+/* Footer                         */
+/* ------------------------------ */
+
 footer {
-  margin-top: 2rem;
+  margin-top: 3rem;
   font-size: 0.85rem;
   color: #aaaaaa;
+  text-align: center;
 }
+~~~

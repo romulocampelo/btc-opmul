@@ -1,32 +1,54 @@
-<#
+~~~powershell
+<# 
 .SYNOPSIS
-  Helper script to run the functional tests for OP_MUL on Windows.
+    Executes the OP_MUL functional tests for a Bitcoin Core build.
 
 .DESCRIPTION
-  Adjust the paths below to match your local Bitcoin Core build.
+    This script locates the functional test directory and runs:
+      - script_op_mul.py
+      - op_mul_numeric_overflow.py
+
+    It assumes the repository root is the parent directory of this script.
 #>
 
-param(
-    [string]$BitcoinCoreRoot = "C:\Dev\btc-opmul\bitcoin",
-    [string]$BuildConfig     = "Release"
-)
+# Resolve repository root
+$ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RepoRoot   = Split-Path -Parent $ScriptRoot
+$TestDir    = Join-Path $RepoRoot "test\functional"
 
-$testDir = Join-Path $BitcoinCoreRoot "test\functional"
-$python  = "python"  # or full path to your virtualenv python if needed
-
-Write-Host "Running OP_MUL functional tests..."
-Write-Host "Bitcoin Core root:" $BitcoinCoreRoot
-Write-Host "Build configuration:" $BuildConfig
+Write-Host "== OP_MUL Functional Test Runner ==" -ForegroundColor Cyan
+Write-Host "Repository root: $RepoRoot"
+Write-Host "Functional test directory: $TestDir"
 Write-Host ""
 
-Push-Location $BitcoinCoreRoot
+# Ensure Python is available
+if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
+    Write-Error "Python was not found in PATH."
+    exit 1
+}
 
-# Example: run the two dedicated test files
-& $python "$testDir\script_op_mul.py"
-& $python "$testDir\op_mul_numeric_overflow.py"
+# Test scripts
+$Tests = @(
+    "script_op_mul.py",
+    "op_mul_numeric_overflow.py"
+)
 
-Pop-Location
-```bash
-python test/functional/script_op_mul.py
-python test/functional/op_mul_numeric_overflow.py
-```
+foreach ($Test in $Tests) {
+    $TestPath = Join-Path $TestDir $Test
+
+    if (-not (Test-Path $TestPath)) {
+        Write-Error "Test script not found: $TestPath"
+        exit 1
+    }
+
+    Write-Host "`nRunning: $Test" -ForegroundColor Yellow
+    python $TestPath
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Test failed: $Test"
+        exit 1
+    }
+}
+
+Write-Host "`nAll OP_MUL functional tests completed successfully." -ForegroundColor Green
+~~~

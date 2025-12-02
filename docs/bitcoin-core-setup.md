@@ -1,127 +1,162 @@
-```markdown
-# Environment and Build Instructions for Bitcoin Core (OP_MUL Implementation)
+~~~markdown
+# Environment Setup and Build Instructions for Bitcoin Core (OP_MUL Implementation)
 
-This document describes the complete procedure used to reproduce, compile, and test the Bitcoin Core environment required for the `OP_MUL` opcode implementation.  
-All steps follow the official development methodology adopted by the Bitcoin Core project, ensuring reproducibility, determinism, and methodological rigor.
+This document describes the complete procedure used to reproduce, build, and test the Bitcoin Core environment required for validating the `OP_MUL` opcode implementation.  
+The workflow follows Bitcoin Core’s official development model to ensure reproducibility, determinism, and methodological consistency.
 
 ---
 
 ## 1. Reference Development Environment
 
-The implementation and experimentation were performed on the following configuration:
+All experiments and tests for this project were performed using the configuration below:
 
 - **Operating System:** Windows 11  
-- **Toolchain:** Microsoft Visual C++ (MSVC 2022)  
-- **Build System:** CMake (multi-generator support)  
+- **Compiler Toolchain:** Microsoft Visual C++ (MSVC 2022)  
+- **Build System:** CMake (multi-generator)  
 - **Bitcoin Core Branch:** `master` (clean checkout)  
 - **Python Version:** 3.10+ (required for functional tests)  
 - **Additional Tools:** Git, Ninja (optional), Visual Studio Build Tools  
 
-The same procedure applies to Linux or macOS with minimal adjustments.
+Although these instructions use Windows as the reference platform, the same workflow applies to Linux and macOS with minor adjustments.
 
 ---
 
 ## 2. Cloning Bitcoin Core
 
-Obtain a clean copy of the Bitcoin Core source tree:
+Begin with a clean clone of the upstream repository:
 
 ```bash
 git clone https://github.com/bitcoin/bitcoin.git
 cd bitcoin
 ```
-It is strongly recommended to work on a clean and recent commit before applying modifications.
+
+It is strongly recommended to work from a fresh commit before applying the patch.
+
+---
 
 ## 3. Applying the OP_MUL Patch
 
-Once inside the repository, apply the patch generated for this project:
+Apply the project’s patch file to the Bitcoin Core source tree:
+
 ```bash
 git apply path/to/op_mul.diff
 ```
-If the patch applies without conflict, the output will be empty.
 
-To verify:
+If the patch applies cleanly, no output is produced.
+
+Verify the modified files:
+
 ```bash
 git status
 ```
-You should see modified files such as:
-```text
-src/script/interpreter.cpp
-src/script/script_error.h
-src/script/script.cpp
-src/test/script_tests.cpp
-test functional scripts (added separately)
-```
+
+Expected entries include:
+
+- `src/script/interpreter.cpp`  
+- `src/script/script_error.h` and `script_error.cpp`  
+- `src/script/script.cpp`  
+- `src/test/script_tests.cpp`  
+- additional functional test scripts added under `test/functional/`
+
+---
 
 ## 4. Generating the Build Configuration
 
-On Windows, the recommended process is:
+### 4.1 Visual Studio Generator (recommended on Windows)
+
 ```bash
 mkdir build
 cd build
 cmake -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release ..
 ```
-This generates a Visual Studio solution (.sln) containing all compilation targets.
 
-Alternatively, for a faster command-line build:
+This produces a Visual Studio `.sln` solution containing all build targets.
+
+### 4.2 Ninja Generator (faster command-line builds)
+
 ```bash
 cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ..
 ```
 
+Ninja builds tend to be significantly faster.
+
+---
+
 ## 5. Building Bitcoin Core
 
-If using Visual Studio:
+### 5.1 Visual Studio Build
 
-Open the generated .sln file.
-
-Select the Release configuration.
-
+Open the generated `.sln` file and select the **Release** configuration.  
 Build the following targets:
 
-- `bitcoind`
-- `bitcoin-cli`
+- `bitcoind`  
+- `bitcoin-cli`  
 - `bitcoin-tx`
 
-If using Ninja: 
+### 5.2 Ninja Build
 
-`ninja` 
+Simply run:
 
-The compiled binaries will be generated (example path):
-```swift
+```bash
+ninja
+```
+
+Compiled binaries are typically located at:
+
+```
 bitcoin/build/bin/Release/
 ```
 
-## 6. Preparing the Functional Test Environment
+---
 
-Bitcoin Core functional tests require:
+## 6. Preparing the Functional Testing Environment
 
-pyzmq
+Bitcoin Core’s functional testing framework requires the following Python dependencies:
 
-requests
+- `pyzmq`  
+- `requests`  
+- `python-bitcoinrpc` (bundled with the framework)
 
-python-bitcoinrpc (bundled with the test framework)
+Install them using:
 
-Install dependencies:
 ```bash
 pip install -r test/functional/requirements.txt
 ```
 
-Functional tests will automatically detect environment support and skip wallet tests when necessary.
+Tests will automatically detect environmental capabilities and conditionally skip wallet-dependent scenarios if the wallet module is unavailable.
 
-## 7. Running Unit and Functional Tests
-Unit Tests
+---
+
+## 7. Running the Test Suite
+
+### 7.1 C++ Unit Tests
+
 ```bash
 src/test/test_bitcoin.exe
-``` 
+```
 
-Functional Tests
+### 7.2 Functional Tests (Python)
+
+Execute the OP_MUL-specific tests:
+
 ```bash
 python test/functional/script_op_mul.py
 python test/functional/op_mul_numeric_overflow.py
 ```
 
-## 8. Conclusion
+These tests validate:
 
-Following the steps above yields a reproducible, deterministic build of Bitcoin Core containing the OP_MUL implementation. All subsequent testing and evaluation described in this project assumes this environment.
+- arithmetic correctness,  
+- stack behavior,  
+- overflow rejection,  
+- consensus error propagation (`SCRIPT_ERR_MUL`),  
+- end-to-end Script evaluation within a regtest node.
 
 ---
 
+## 8. Conclusion
+
+Following the steps above yields a clean, deterministic build of Bitcoin Core containing the `OP_MUL` implementation.  
+All experiments, functional testing procedures, and validation steps documented in this project assume this environment as their baseline.
+
+~~~

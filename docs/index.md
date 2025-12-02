@@ -1,42 +1,77 @@
+~~~markdown
 ---
 title: OP_MUL for Bitcoin Core
 layout: default
 ---
+
 <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 
 # OP_MUL for Bitcoin Core
 
-This site documents an implementation of a new opcode in Bitcoin Core:
+This site documents the design, implementation, and evaluation of a new Bitcoin Script opcode:
 
 ```text
 OP_MUL = 0x95
 ```
-The opcode performs signed 32-bit integer multiplication in Bitcoin Script, with explicit overflow detection and strict overflow handling.
 
-Contents
+The opcode performs **signed 32-bit integer multiplication** within Bitcoin Script, using **explicit overflow detection** to ensure deterministic, consensus-safe behavior.
 
-Design and rationale
+---
 
-Environment and build instructions
+## Overview
 
-Testing strategy and test cases
+This project introduces OP_MUL into the Bitcoin Core Script interpreter with:
 
-Project status
+- fully specified operational semantics,  
+- strict overflow handling,  
+- compatibility with `CScriptNum(4 bytes)`,  
+- complete unit and functional test coverage,  
+- reproducibility across platforms.
 
-Implementation: complete and tested locally.
+The implementation follows Bitcoin Core’s development conventions and preserves all consensus invariants.
 
-Unit tests (C++): all Bitcoin Core tests pass, including a dedicated overflow test.
+---
 
-Functional tests (Python):
+## Documentation
 
-script_op_mul.py
+The sections below describe the project in detail:
 
-op_mul_numeric_overflow.py
+- **[Design and Rationale](op_mul-design.md)**  
+  Formal semantics, design principles, and integration notes.
 
-Overflow behaviour:
+- **[Environment and Build Instructions](bitcoin-core-setup.md)**  
+  How to reproduce the Bitcoin Core environment used in this work.
 
-If the product fits in 32 bits: script succeeds.
+- **[Testing Strategy](testing.md)**  
+  Unit tests, functional tests, and deterministic overflow validation.
 
-Otherwise: script fails with SCRIPT_ERR_MUL.
+Additional materials, including patch files and development logs, are available in the repository.
 
-For details, see the pages linked above.
+---
+
+## Project Status
+
+- **Implementation:** Complete  
+- **Interpreter Integration:** Verified  
+- **Unit Tests (C++):** All passing, including boundary and overflow cases  
+- **Functional Tests (Python):**  
+  - `script_op_mul.py`  
+  - `op_mul_numeric_overflow.py`  
+
+---
+
+## Overflow Behavior Summary
+
+- If the product fits in the signed 32-bit domain, the result is pushed onto the stack.  
+- If overflow occurs, script evaluation terminates with:
+
+```text
+SCRIPT_ERR_MUL
+```
+
+This ensures deterministic arithmetic consistent with Bitcoin’s consensus model.
+
+---
+
+For detailed technical discussion and supporting material, see the documentation pages linked above.
+~~~
