@@ -13,7 +13,7 @@ This site documents the design, implementation, and evaluation of a new Bitcoin 
 OP_MUL = 0x95
 ```
 
-The opcode performs **signed 32-bit integer multiplication** within Bitcoin Script, using **explicit overflow detection** to ensure deterministic, consensus-safe behavior.
+The opcode performs **signed 32-bit integer multiplication** within Bitcoin Script, using **explicit overflow detection** to ensure deterministic and consensus-safe behavior.
 
 ---
 
@@ -23,7 +23,7 @@ This project introduces OP_MUL into the Bitcoin Core Script interpreter with:
 
 - fully specified operational semantics,  
 - strict overflow handling,  
-- compatibility with `CScriptNum(4 bytes)`,  
+- compatibility with `CScriptNum` (4-byte numeric limit),  
 - complete unit and functional test coverage,  
 - reproducibility across platforms.
 
@@ -61,20 +61,20 @@ Additional materials, including patch files and development logs, are available 
 - **Unit Tests (C++):** All passing, including boundary and overflow cases  
 - **Functional Tests (Python):**  
   - `script_op_mul.py`  
-  - `op_mul_numeric_overflow.py`  
+  - `op_mul_numeric_overflow.py`
 
 ---
 
 ## Overflow Behavior Summary
 
-- If the product fits in the signed 32-bit domain, the result is pushed onto the stack.  
+- If the product fits within the signed 32-bit domain, the result is pushed onto the stack.  
 - If overflow occurs, script evaluation terminates with:
 
 ```text
 SCRIPT_ERR_MUL
 ```
 
-This ensures deterministic arithmetic consistent with Bitcoin’s consensus model.
+This ensures deterministic arithmetic consistent with Bitcoin’s consensus rules.
 
 ---
 

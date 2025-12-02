@@ -1,7 +1,6 @@
 # Testing Strategy for the OP_MUL Opcode
 
-This document formalizes the testing methodology used to validate the correctness, determinism, and consensus safety of the `OP_MUL` opcode implemented in Bitcoin Core.
-
+This document formalizes the testing methodology used to validate the correctness, determinism, and consensus safety of the `OP_MUL` opcode implemented in Bitcoin Core.  
 A layered approach—combining unit tests, functional tests, and boundary-focused validation—ensures comprehensive coverage of both nominal and failure-path behavior.
 
 ---
@@ -10,12 +9,14 @@ A layered approach—combining unit tests, functional tests, and boundary-focuse
 
 The testing framework is designed to verify:
 
-- correct multiplication within the signed 32-bit integer domain;
+- correct multiplication within the signed 32-bit integer domain (`[-2^31, 2^31 − 1]`);
 - strict and deterministic overflow detection;
-- preservation of Script invariants (stack behavior, encoding rules);
-- compatibility with the Bitcoin Core testing framework;
-- accurate propagation of failure conditions and error codes;
-- reproducibility across architectures and execution environments.
+- preservation of Script invariants (stack behavior and canonical encoding rules);
+- compatibility with Bitcoin Core’s existing test framework;
+- accurate propagation of failure conditions and consensus errors;
+- reproducibility across different platforms and environments.
+
+This strategy directly supports the semantic and operational guarantees defined in `specification.md` and `op_mul-design.md`.
 
 ---
 
@@ -31,17 +32,17 @@ Unit tests are implemented in `src/test/script_tests.cpp` and operate directly o
    - `0 * x = 0` for all valid operands
 
 2. **Boundary Correctness**
-   - `INT32_MAX * 1` → accepted
-   - `INT32_MIN * 1` → accepted
+   - `INT32_MAX * 1` → accepted  
+   - `INT32_MIN * 1` → accepted  
 
 3. **Overflow Rejection**
-   - `INT32_MAX * 2` → `SCRIPT_ERR_MUL`
-   - `INT32_MIN * (-1)` → `SCRIPT_ERR_MUL`
+   - `INT32_MAX * 2` → `SCRIPT_ERR_MUL`  
+   - `INT32_MIN * (-1)` → `SCRIPT_ERR_MUL`  
 
 4. **Stack Behavior and Encoding**
-   - Exactly two inputs consumed and one output produced on success
-   - Failure paths leave the stack unmodified
-   - Canonical encoding rules enforced via `CScriptNum(4 bytes)`
+   - Two inputs consumed and one output produced on success  
+   - Failure paths leave the stack unmodified  
+   - Canonical numeric encoding enforced via `CScriptNum(4 bytes)`
 
 Unit tests validate the semantic core of the opcode under deterministic, isolated conditions.
 
@@ -54,20 +55,20 @@ Functional tests validate behavior within a running Bitcoin node, using the stan
 ### 3.1 Test Scripts
 
 - **`script_op_mul.py`**  
-  Verifies arithmetic correctness, Script evaluation outcomes, and boundary cases.
+  Validates arithmetic correctness, Script evaluation outcomes, and boundary-case semantics.
 
 - **`op_mul_numeric_overflow.py`**  
-  Constructs P2SH transactions that deliberately trigger overflow conditions and ensures proper rejection.
+  Constructs P2SH transactions intentionally triggering overflow and ensures proper rejection.
 
 ### 3.2 Functional Scenarios
 
-- Execution of valid scripts inside a regtest node
-- Accurate rejection of invalid scripts and transactions
-- Propagation of `SCRIPT_ERR_MUL` into RPC error outputs
-- Deterministic execution across runs and across platforms
-- Portable behavior: automatic skipping when wallet features are unavailable
+- Execution of valid scripts inside a regtest node  
+- Accurate rejection of invalid scripts and transactions  
+- Propagation of `SCRIPT_ERR_MUL` through RPC interfaces  
+- Deterministic execution across multiple test runs  
+- Automatic skipping when wallet features are unavailable  
 
-Functional tests ensure integration correctness at the node level.
+Functional tests ensure integration correctness at the full node level.
 
 ---
 
@@ -75,19 +76,19 @@ Functional tests ensure integration correctness at the node level.
 
 All tests jointly verify:
 
-- deterministic computation of `x1 × x2` using 64-bit intermediate arithmetic;
-- absence of wrap-around or architecture-dependent overflow behavior;
-- consistent issuance of the consensus error `SCRIPT_ERR_MUL`;
-- alignment with the error strings defined in `script.cpp`;
-- invariance of behavior across multiple test runs and system configurations.
+- deterministic computation of `x1 × x2` using 64-bit intermediate arithmetic;  
+- absence of wrap-around or architecture-dependent overflow behavior;  
+- consistent issuance of the consensus error `SCRIPT_ERR_MUL`;  
+- correct error-string mapping in `script.cpp`;  
+- invariance of behavior across platforms and execution environments.
 
-This section guarantees the implementation is consensus-safe and free of nondeterministic arithmetic.
+This confirms that the implementation is consensus-safe and free of nondeterministic arithmetic behavior.
 
 ---
 
 ## 5. Reproducing the Tests
 
-Ensure Bitcoin Core is compiled and accessible.
+Ensure Bitcoin Core is compiled and available.
 
 ### 5.1 Run C++ Unit Tests
 
@@ -102,11 +103,11 @@ python test/functional/script_op_mul.py
 python test/functional/op_mul_numeric_overflow.py
 ```
 
-All tests are deterministic and require no external dependencies beyond a working regtest environment.
+All tests are deterministic and require only a standard regtest environment.
 
 ---
 
 ## 6. Conclusion
 
 The testing strategy provides comprehensive assurance of the correctness and safety of `OP_MUL`.  
-By combining unit-level assertions, script-level test vectors, and node-level functional testing, the implementation demonstrates fully deterministic behavior, strict overflow discipline, and complete adherence to Bitcoin Core’s consensus semantics.
+By combining unit-level assertions, script-level test vectors, and node-level functional testing, the implementation demonstrates deterministic arithmetic, strict overflow discipline, and full adherence to Bitcoin Core’s consensus semantics.

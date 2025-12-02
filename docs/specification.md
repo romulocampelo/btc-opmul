@@ -1,7 +1,7 @@
 # OP_MUL (0x95) — Formal Specification
 
 This document provides a normative specification for the `OP_MUL` opcode implemented in Bitcoin Script.  
-It is written in the style of a minimal Request for Comments (RFC) suitable for consensus-critical arithmetic semantics.
+It follows the structure of a minimal Request for Comments (RFC) suitable for consensus-critical arithmetic semantics.
 
 ---
 
@@ -19,7 +19,7 @@ Status:     Active (project implementation)
 ## 2. Purpose
 
 `OP_MUL` performs deterministic, signed 32-bit integer multiplication using a 64-bit intermediate result.  
-It preserves Script’s constraint model and enforces strict overflow detection.
+It adheres to Script’s constrained numeric model and enforces strict overflow detection in accordance with the canonical `CScriptNum(4 bytes)` representation.
 
 ---
 
@@ -34,8 +34,8 @@ It preserves Script’s constraint model and enforces strict overflow detection.
 Where:
 
 - `x1` and `x2` are integers encoded via `CScriptNum` with:
-  - **max size:** 4 bytes
-  - **canonical encoding:** required
+  - **maximum size:** 4 bytes  
+  - **canonical encoding:** required  
   - **domain:** `[-2³¹, 2³¹ − 1]`
 
 ### 3.2 Stack Output
@@ -48,7 +48,7 @@ On success:
 
 On failure:
 
-- script terminates with `SCRIPT_ERR_MUL`
+- script terminates with `SCRIPT_ERR_MUL`  
 - no value is pushed
 
 ---
@@ -57,13 +57,13 @@ On failure:
 
 Let:
 
-- `x1, x2 ∈ ℤ₃₂` (signed 32-bit domain)
-- multiplication executed in ℤ₆₄
+- `x1, x2 ∈ ℤ₃₂` (signed 32-bit integer domain),  
+- multiplication performed in `ℤ₆₄`.
 
 Define:
 
 ```
-p = x1 * x2
+p = x1 × x2
 ```
 
 Consensus rule:
@@ -74,6 +74,8 @@ If -2³¹ ≤ p ≤ 2³¹ − 1:
 Else:
       fail with SCRIPT_ERR_MUL
 ```
+
+This behavior is fully deterministic and consistent across architectures.
 
 ---
 
@@ -100,18 +102,18 @@ OP_MUL:
 7. continue execution
 ```
 
-This algorithm is normative.
+This algorithm constitutes the canonical reference behavior.
 
 ---
 
 ## 6. Error Conditions
 
-| Condition | Error Code |
-|----------|------------|
-| insufficient stack elements | `SCRIPT_ERR_INVALID_STACK_OPERATION` |
-| non-canonical numeric encoding | `SCRIPT_ERR_NUMERIC` (inherited) |
-| overflow or underflow | `SCRIPT_ERR_MUL` |
-| malformed script | standard Script errors |
+| Condition                           | Error Code                           |
+|------------------------------------|---------------------------------------|
+| insufficient stack elements         | `SCRIPT_ERR_INVALID_STACK_OPERATION` |
+| non-canonical numeric encoding      | `SCRIPT_ERR_NUMERIC` (inherited)     |
+| overflow or underflow               | `SCRIPT_ERR_MUL`                     |
+| malformed script                    | standard Script errors                |
 
 ---
 
@@ -129,7 +131,7 @@ D_in = ℤ₃₂ × ℤ₃₂
 D_out = ℤ₃₂
 ```
 
-Undefined outputs (outside ℤ₃₂) result in immediate script failure.
+Results outside ℤ₃₂ produce immediate script failure.
 
 ---
 
@@ -141,8 +143,8 @@ OP_MUL :  (x1, x2) ↦ (p)
 
 Where:
 
-- `p = x1 × x2` if the product is in ℤ₃₂  
-- otherwise, no mapping (→ failure)
+- `p = x1 × x2` if `p` lies within ℤ₃₂  
+- otherwise → failure (no value is pushed)
 
 ---
 
@@ -155,15 +157,17 @@ Where:
 - no leading zeros,  
 - rejection of non-canonical representations.
 
+These rules ensure consistent interpretation across nodes and architectures.
+
 ---
 
 ## 10. Determinism Requirements
 
-`OP_MUL` MUST:
+`OP_MUL` **MUST**:
 
 1. produce identical results on all architectures;  
-2. reject all overflows;  
-3. use 64-bit intermediate multiplication;  
+2. reject all overflows deterministically;  
+3. perform multiplication using a 64-bit intermediate domain;  
 4. push only canonical 32-bit results;  
 5. avoid undefined CPU or compiler behavior.
 
@@ -173,16 +177,16 @@ These constraints are consensus-critical.
 
 ## 11. Test Coverage Summary
 
-Required classes:
+Required classes of test cases include:
 
-- valid multiplications  
-- zero multiplication  
-- negative × negative  
-- boundary limits (±1, ±2³¹−1)  
-- overflow triggers  
-- P2SH and regtest end-to-end evaluation  
+- valid multiplications,  
+- zero multiplication,  
+- negative × negative,  
+- boundary limits (±1, ±2³¹−1),  
+- overflow scenarios,  
+- P2SH and regtest end-to-end validation.
 
-(Details in `testing.md`.)
+(Additional detail in `testing.md`.)
 
 ---
 
@@ -193,13 +197,13 @@ This specification is intended for:
 - academic research,  
 - interpreter experimentation,  
 - Script opcode design studies,  
-- evaluation of arithmetic safety in consensus systems.
+- evaluation of arithmetic safety in consensus-critical systems.
 
-It does **not** represent a proposal for Bitcoin mainnet activation.
+It does **not** represent a proposal for mainnet activation.
 
 ---
 
 ## 13. Conclusion
 
-`OP_MUL` introduces a deterministic, formally specified multiplication operator to Bitcoin Script, consistent with all consensus invariants enforced by Bitcoin Core.  
-By defining exact operand domains, encoding rules, failure conditions, and stack semantics, this specification ensures rigorous and reproducible behavior.
+`OP_MUL` introduces a deterministic, explicitly specified multiplication operator for Bitcoin Script, consistent with all consensus invariants enforced by Bitcoin Core.  
+By defining exact operand domains, encoding rules, failure modes, and stack semantics, this specification ensures rigorous and reproducible behavior.
