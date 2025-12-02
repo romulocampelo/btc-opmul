@@ -1,4 +1,3 @@
-~~~powershell
 <# 
 .SYNOPSIS
     Executes the OP_MUL functional tests for a Bitcoin Core build.
@@ -51,4 +50,3 @@ foreach ($Test in $Tests) {
 }
 
 Write-Host "`nAll OP_MUL functional tests completed successfully." -ForegroundColor Green
-~~~

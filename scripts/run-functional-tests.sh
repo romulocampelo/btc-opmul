@@ -1,4 +1,3 @@
-~~~bash
 #!/usr/bin/env bash
 #
 # OP_MUL Functional Test Runner for Bitcoin Core
@@ -49,4 +48,3 @@ for test in "${TESTS[@]}"; do
 done
 
 echo "All OP_MUL functional tests completed successfully."
-~~~

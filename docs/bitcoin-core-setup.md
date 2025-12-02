@@ -1,4 +1,3 @@
-~~~markdown
 # Environment Setup and Build Instructions for Bitcoin Core (OP_MUL Implementation)
 
 This document describes the complete procedure used to reproduce, build, and test the Bitcoin Core environment required for validating the `OP_MUL` opcode implementation.  
@@ -158,5 +157,3 @@ These tests validate:
 
 Following the steps above yields a clean, deterministic build of Bitcoin Core containing the `OP_MUL` implementation.  
 All experiments, functional testing procedures, and validation steps documented in this project assume this environment as their baseline.
-
-~~~

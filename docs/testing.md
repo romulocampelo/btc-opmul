@@ -1,4 +1,3 @@
-~~~markdown
 # Testing Strategy for the OP_MUL Opcode
 
 This document formalizes the testing methodology used to validate the correctness, determinism, and consensus safety of the `OP_MUL` opcode implemented in Bitcoin Core.
@@ -111,4 +110,3 @@ All tests are deterministic and require no external dependencies beyond a workin
 
 The testing strategy provides comprehensive assurance of the correctness and safety of `OP_MUL`.  
 By combining unit-level assertions, script-level test vectors, and node-level functional testing, the implementation demonstrates fully deterministic behavior, strict overflow discipline, and complete adherence to Bitcoin Core’s consensus semantics.
-~~~

@@ -1,4 +1,3 @@
-~~~markdown
 # Design Rationale and Formal Specification of OP_MUL (0x95)
 
 This document provides a formal, academically rigorous description of the design decisions, semantics, and implementation criteria adopted for the opcode `OP_MUL`, integrated into Bitcoin Core's Script interpreter.
@@ -159,4 +158,3 @@ Output Stack:
 The opcode integrates cleanly into the interpreter, mirrors the conventions of existing arithmetic instructions, and is supported by comprehensive unit and functional tests.
 
 This design forms a robust foundation for educational exploration, applied research, and controlled experimentation with Script language extensions.
-~~~

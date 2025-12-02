@@ -1,4 +1,3 @@
-~~~markdown
 # Security Considerations for OP_MUL (0x95)
 
 This document analyzes the security implications of introducing the `OP_MUL` opcode into Bitcoin Script.  
@@ -144,4 +143,3 @@ When evaluated against standard threat models for consensus systems, `OP_MUL`:
 - integrates cleanly with existing Script semantics.
 
 Therefore, the opcode can be considered **secure for controlled academic experimentation** and demonstrably consistent with Bitcoin Core’s consensus-critical execution model.
-~~~

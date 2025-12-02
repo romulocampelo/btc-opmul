@@ -1,4 +1,3 @@
-~~~markdown
 # OP_MUL (0x95) — Formal Specification
 
 This document provides a normative specification for the `OP_MUL` opcode implemented in Bitcoin Script.  
@@ -204,4 +203,3 @@ It does **not** represent a proposal for Bitcoin mainnet activation.
 
 `OP_MUL` introduces a deterministic, formally specified multiplication operator to Bitcoin Script, consistent with all consensus invariants enforced by Bitcoin Core.  
 By defining exact operand domains, encoding rules, failure conditions, and stack semantics, this specification ensures rigorous and reproducible behavior.
-~~~

@@ -1,4 +1,3 @@
-~~~markdown
 ---
 title: OP_MUL for Bitcoin Core
 layout: default
@@ -74,4 +73,3 @@ This ensures deterministic arithmetic consistent with Bitcoin’s consensus mode
 ---
 
 For detailed technical discussion and supporting material, see the documentation pages linked above.
-~~~

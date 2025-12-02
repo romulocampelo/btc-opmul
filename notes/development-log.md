@@ -1,4 +1,3 @@
-~~~markdown
 # Development Log for OP_MUL
 
 This document provides a chronological record of the key steps involved in the design, implementation, and validation of the `OP_MUL` opcode for Bitcoin Core.  
@@ -87,4 +86,3 @@ This development log captures the essential progression of the project without r
 Detailed exposition of the opcode's design, rationale, formal semantics, and testing methodology is available in the `/docs` directory.
 
 The implementation is complete, validated, and aligned with Bitcoin Core’s conventions for consensus-critical arithmetic operations.
-~~~
