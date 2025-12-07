@@ -35,8 +35,11 @@ The implementation follows Bitcoin Core’s development conventions and preserve
 
 The sections below describe the project in detail:
 
-- **[Design and Rationale](op_mul-design.md)**  
+- **[Design and Rationale for OP_MUL](op_mul-design.md)**  
   Formal semantics, design principles, and integration notes.
+  
+- **[Design Rationale for Arithmetic Patterns](integer_design_rationale.md)**  
+  To understand the consensus risks of floating-point arithmetic and how to perform decimal calculations using `OP_MUL` with fixed-point logic.  
 
 - **[Environment and Build Instructions](bitcoin-core-setup.md)**  
   How to reproduce the Bitcoin Core environment used in this work.

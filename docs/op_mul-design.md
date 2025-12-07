@@ -17,7 +17,6 @@ The objectives are:
 - to ensure interoperability with the integer domain enforced by `CScriptNum`.
 
 ---
-
 ## 2. Operational Semantics
 
 `OP_MUL` operates on the top two elements of the stack:
