@@ -1,4 +1,4 @@
-# Design Rationale Arithmetic Patterns
+# Design Rationale for Arithmetic Patterns
 
 ## Why No Floating-Point Support?
 
